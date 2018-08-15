@@ -202,8 +202,7 @@ bool AccessLog::Connect() {
 
   struct sockaddr_un addr = {.sun_family = AF_UNIX, .sun_path = {}};
   strncpy(addr.sun_path, path_.c_str(), sizeof(addr.sun_path) - 1);
-  if (::connect(fd_, reinterpret_cast<struct sockaddr *>(&addr),
-                sizeof(addr)) == -1) {
+  if (::connect(fd_, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) == -1) {
     ENVOY_LOG(warn, "Connect to {} failed: {}", path_, strerror(errno));
     ::close(fd_);
     fd_ = -1;

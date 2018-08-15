@@ -400,6 +400,7 @@ static_resources:
         config:
           go_module: "./go_filter.so"
           go_proto: "passer"
+          access_log_path: ""
       - name: envoy.http_connection_manager
         config:
           stat_prefix: config_test
@@ -487,7 +488,7 @@ public:
     tls.shutdownGlobalThreading();
   }
 
-  AccessLogServer accessLogServer_;;
+  AccessLogServer accessLogServer_;
 };
 
 class CiliumIntegrationTest : public CiliumIntegrationTestBase {
@@ -900,6 +901,7 @@ static_resources:
         config:
           go_module: "./go_filter.so"
           go_proto: "passer"
+          access_log_path: ""
       - name: envoy.tcp_proxy
         config:
           stat_prefix: tcp_stats
@@ -1163,6 +1165,7 @@ static_resources:
         config:
           go_module: "./go_filter.so"
           go_proto: "linetester"
+          access_log_path: ""
       - name: envoy.tcp_proxy
         config:
           stat_prefix: tcp_stats
@@ -1369,6 +1372,8 @@ static_resources:
         config:
           go_module: "./go_filter.so"
           go_proto: "blocktester"
+          access_log_path: "access_log.sock"
+          policy_name: "FooBar"
       - name: envoy.tcp_proxy
         config:
           stat_prefix: tcp_stats
@@ -1378,7 +1383,8 @@ static_resources:
 class CiliumGoBlocktesterIntegrationTest : public BaseIntegrationTest,
                                           public testing::TestWithParam<Network::Address::IpVersion> {
 public:
-  CiliumGoBlocktesterIntegrationTest() : BaseIntegrationTest(GetParam(), fmt::format(cilium_go_blocktester_config_fmt, "true")) {
+  CiliumGoBlocktesterIntegrationTest() : BaseIntegrationTest(GetParam(), fmt::format(cilium_go_blocktester_config_fmt, "true")),
+					 accessLogServer_("access_log.sock") {
     enable_half_close_ = true;
   }
 
@@ -1398,6 +1404,8 @@ public:
     fake_upstreams_.clear();
     npmap.reset();
   }
+  
+  AccessLogServer accessLogServer_;
 };
 
 INSTANTIATE_TEST_CASE_P(IpVersions, CiliumGoBlocktesterIntegrationTest,
