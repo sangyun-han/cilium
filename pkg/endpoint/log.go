@@ -54,7 +54,7 @@ func (e *Endpoint) updateLogger() {
 	shouldUpdate := e.logger == nil || e.Options == nil ||
 		e.logger.Data[logfields.EndpointID] != e.ID ||
 		e.logger.Data[logfields.ContainerID] != containerID ||
-		e.logger.Data[logfields.PolicyRevision] != e.policyRevision ||
+		e.logger.Data[logfields.DatapathPolicyRevision] != e.policyRevision ||
 		e.logger.Data[logfields.IPv4] != e.IPv4.String() ||
 		e.logger.Data[logfields.IPv6] != e.IPv6.String() ||
 		e.logger.Data[logfields.K8sPodName] != podName ||
@@ -79,12 +79,12 @@ func (e *Endpoint) updateLogger() {
 	// Note: endpoint.loggerMutex protects the reference but not the logger objects. We
 	// cannot update the old object directly as that could be racey.
 	e.logger = baseLogger.WithFields(logrus.Fields{
-		logfields.EndpointID:     e.ID,
-		logfields.ContainerID:    containerID,
-		logfields.PolicyRevision: e.policyRevision,
-		logfields.IPv4:           e.IPv4.String(),
-		logfields.IPv6:           e.IPv6.String(),
-		logfields.K8sPodName:     podName,
+		logfields.EndpointID:             e.ID,
+		logfields.ContainerID:            containerID,
+		logfields.DatapathPolicyRevision: e.policyRevision,
+		logfields.IPv4:                   e.IPv4.String(),
+		logfields.IPv6:                   e.IPv6.String(),
+		logfields.K8sPodName:             podName,
 	})
 	e.loggerMutex.Unlock()
 }
